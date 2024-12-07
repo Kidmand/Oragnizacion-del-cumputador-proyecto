@@ -1,0 +1,43 @@
+	sub sp, sp , 24
+	ldur x19 , [sp, #0]
+	ldur x20 , [sp, #8]
+	ldur x21 ,[ sp, #16]
+
+	mov x12, x20
+	lsr x12, x12 , #1
+	mov x15 , SCREEN_WIDTH
+	mul x12, x12, x15
+	lsl x12, x12, #2
+	// x12 = (largo / 2 ) * 4 * 640
+	sub x0, x0 ,x12
+	// Le restamos al centro (x0)  el alto necesario 
+
+	mov x13 , x19
+	lsl x13, x13, 1
+	sub x0, x0, x13
+	// Le restamos al centro (x0)  el ancho necesario 
+
+
+	mov x14, SCREEN_WIDTH
+	sub x14, x14, x19
+	lsl x14, x14, 2
+	
+	mov x9, xzr
+	add x9,x9, x20
+loop1:	
+	mov x10, xzr
+	add x10,x10, x19        
+loop2:
+	stur w21,[x0]  // Colorear el pixel N
+	add x0,x0,4    // Siguiente pixel
+	sub x10,x10,1    // Decrementar contador X
+	cbnz x10,loop2  // Si no terminó la fila, salto
+	sub x9,x9,1 
+	add x0,x0, x14
+	cbnz x9,loop1
+
+	stur x19 , [sp, #0]
+	stur x20 , [sp, #8]
+	stur x21 , [sp, #16]
+	add sp, sp , 24
+	br lr
